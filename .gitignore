@@ -4,6 +4,7 @@
 # Arquivos gerados
 **/dist/
 **/coverage/
+**/.vite/
 *.tsbuildinfo
 
 # Configurações locais e segredos
