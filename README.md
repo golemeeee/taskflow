@@ -1,17 +1,17 @@
 # TaskFlow
 
-Aplicação de organização de tarefas feita com React e TypeScript. O frontend mostra uma prévia do quadro de tarefas, e o backend já conta com um servidor Express.
+Aplicação para organizar tarefas. O frontend é feito em React e TypeScript, e o backend usa Express.
 
 ## Tecnologias
 
-- **Frontend:** React, TypeScript, Vite e CSS
-- **Backend:** Node.js, Express e TypeScript
+- React, TypeScript, Vite e CSS
+- Node.js e Express
 
-## Como rodar
+## Executar
 
 É necessário ter Node.js e npm instalados.
 
-Abra um terminal na pasta do projeto e inicie o frontend:
+Para abrir o frontend, na pasta `taskflow`:
 
 ```bash
 cd frontend
@@ -19,9 +19,9 @@ npm install
 npm run dev
 ```
 
-O site abre normalmente em `http://localhost:5173`.
+Acesse `http://localhost:5173`.
 
-Em outro terminal, a partir da pasta principal do projeto, inicie a API:
+Em outro terminal, na pasta `taskflow`:
 
 ```bash
 cd backend
@@ -29,7 +29,7 @@ npm install
 npm run dev
 ```
 
-A API roda em `http://localhost:3001`. Para conferir se o servidor está respondendo, abra `http://localhost:3001/health`. O retorno esperado é:
+A API roda em `http://localhost:3001`. A rota `GET /health` retorna:
 
 ```json
 {"status":"ok","service":"taskflow-api"}
@@ -37,31 +37,34 @@ A API roda em `http://localhost:3001`. Para conferir se o servidor está respond
 
 ## Testes
 
-Para executar o teste da rota `/health`:
+Na pasta `backend`:
 
 ```bash
-cd backend
 npm test
-```
-
-Para verificar a compilação do backend:
-
-```bash
 npm run build
 ```
 
-## Estrutura
+Os testes verificam a rota `/health` e o armazenamento temporário de tarefas.
+
+## Organização
 
 ```text
 taskflow/
-├── frontend/     # Interface React
+├── frontend/
 ├── backend/
-│   ├── src/      # Configuração e inicialização do servidor
-│   └── tests/    # Testes da API
+│   ├── src/
+│   │   ├── tasks/
+│   │   │   ├── task.ts
+│   │   │   └── taskStore.ts
+│   │   ├── app.ts
+│   │   └── server.ts
+│   └── tests/
 ├── .gitignore
 └── README.md
 ```
 
-## Situação atual
+## Estado atual
 
-O frontend ainda é uma prévia visual: não é possível cadastrar tarefas por enquanto. A API possui a rota `GET /health`, usada para verificar se o servidor está funcionando. O frontend ainda não faz requisições ao backend e os dados ainda não são armazenados em banco.
+O frontend ainda é uma interface de apresentação. No backend, já existe o modelo `Task`, com título, descrição, status, prioridade, prazo e datas de criação e atualização.
+
+A classe `TaskStore` permite criar, listar e localizar tarefas em memória. Os dados são perdidos quando o processo termina. Essas operações ainda não estão disponíveis por rotas HTTP; por enquanto, a única rota pública é `GET /health`.
