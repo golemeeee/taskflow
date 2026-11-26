@@ -1,17 +1,20 @@
 # TaskFlow
 
-Aplicação para organizar tarefas. O frontend é feito em React e TypeScript, e o backend usa Express.
+Aplicação de gerenciamento de tarefas feita com React, TypeScript e Express.
+
+O frontend apresenta a interface do projeto. No backend, já é possível criar e listar tarefas por uma API HTTP. Por enquanto, as tarefas ficam na memória e são apagadas quando o servidor é reiniciado.
 
 ## Tecnologias
 
-- React, TypeScript, Vite e CSS
-- Node.js e Express
+- React, TypeScript, Vite e CSS no frontend
+- Node.js, Express e TypeScript no backend
+- Testes com `node:test`
 
 ## Executar
 
 É necessário ter Node.js e npm instalados.
 
-Para abrir o frontend, na pasta `taskflow`:
+**Frontend:** abra um terminal na pasta principal do projeto e execute:
 
 ```bash
 cd frontend
@@ -21,7 +24,7 @@ npm run dev
 
 Acesse `http://localhost:5173`.
 
-Em outro terminal, na pasta `taskflow`:
+**Backend:** abra outro terminal na pasta principal e execute:
 
 ```bash
 cd backend
@@ -29,10 +32,55 @@ npm install
 npm run dev
 ```
 
-A API roda em `http://localhost:3001`. A rota `GET /health` retorna:
+A API fica disponível em `http://localhost:3001`.
+
+## API
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET | `/health` | Verifica se o servidor está ativo |
+| GET | `/api/tasks` | Lista as tarefas cadastradas |
+| POST | `/api/tasks` | Cadastra uma tarefa |
+
+### Exemplo: criar uma tarefa
+
+Envie uma requisição `POST` para `http://localhost:3001/api/tasks` com o corpo JSON:
 
 ```json
-{"status":"ok","service":"taskflow-api"}
+{
+  "title": "Estudar TypeScript",
+  "description": "Revisar interfaces",
+  "priority": "high",
+  "dueDate": "2026-12-10"
+}
+```
+
+O servidor retorna o objeto criado com **HTTP 201**, incluindo `id`, `status`, `createdAt` e `updatedAt`.
+
+O campo `title` é obrigatório (de 1 a 120 caracteres após remover espaços das pontas). Os demais são opcionais:
+
+- `description`: texto com até 1000 caracteres;
+- `priority`: `low`, `medium` ou `high` (padrão: `medium`);
+- `status`: `todo`, `doing` ou `done` (padrão: `todo`);
+- `dueDate`: data real no formato `AAAA-MM-DD` ou `null` (padrão: `null`).
+
+Se os dados forem inválidos, a API retorna **HTTP 400** com uma mensagem no campo `error`.
+
+### Testar no PowerShell
+
+Com o backend rodando, em um terminal separado:
+
+```powershell
+Invoke-RestMethod http://localhost:3001/api/tasks
+
+$dados = @{
+  title = "Estudar TypeScript"
+  priority = "high"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri http://localhost:3001/api/tasks -Method Post -ContentType "application/json" -Body $dados
+
+Invoke-RestMethod http://localhost:3001/api/tasks
 ```
 
 ## Testes
@@ -44,9 +92,9 @@ npm test
 npm run build
 ```
 
-Os testes verificam a rota `/health` e o armazenamento temporário de tarefas.
+Os testes verificam o servidor, o armazenamento em memória e as rotas da API.
 
-## Organização
+## Estrutura
 
 ```text
 taskflow/
@@ -55,7 +103,8 @@ taskflow/
 │   ├── src/
 │   │   ├── tasks/
 │   │   │   ├── task.ts
-│   │   │   └── taskStore.ts
+│   │   │   ├── taskStore.ts
+│   │   │   └── taskRoutes.ts
 │   │   ├── app.ts
 │   │   └── server.ts
 │   └── tests/
@@ -63,8 +112,8 @@ taskflow/
 └── README.md
 ```
 
-## Estado atual
+## Limitações atuais
 
-O frontend ainda é uma interface de apresentação. No backend, já existe o modelo `Task`, com título, descrição, status, prioridade, prazo e datas de criação e atualização.
-
-A classe `TaskStore` permite criar, listar e localizar tarefas em memória. Os dados são perdidos quando o processo termina. Essas operações ainda não estão disponíveis por rotas HTTP; por enquanto, a única rota pública é `GET /health`.
+- O frontend ainda não faz requisições para a API.
+- As tarefas são mantidas apenas em memória, sem banco de dados.
+- Ainda não existem rotas HTTP para editar ou excluir tarefas.
